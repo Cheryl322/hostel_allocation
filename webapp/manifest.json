@@ -136,7 +136,7 @@
         "TargetUpdateRoomAssignment": {
           "id": "UpdateRoomAssignment",
           "name": "UpdateRoomAssignment",
-          "path": "project1.subsystem.hostelAllocation.view"
+          "path": "subsystem.hostelAllocation.view"
         }
       }
     },
