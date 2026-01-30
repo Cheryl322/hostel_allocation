@@ -20,14 +20,12 @@ sap.ui.define([
             this._refreshData();
         },
 
-        // === 1. 数据加载 (完全复用 Allocate 的逻辑，保证卡片显示一致) ===
         _refreshData: function () {
             var oMainModel = this.getOwnerComponent().getModel();
             var aRooms = oMainModel.getProperty("/rooms") || [];
             var aAllocations = oMainModel.getProperty("/allocations") || [];
             var aStudents = oMainModel.getProperty("/students") || [];
 
-            // 算出每个房间住了谁
             var aProcessedRooms = aRooms.map(function (room) {
                 var aRoomAllocations = aAllocations.filter(a => a.roomNumber === room.roomNumber);
                 
@@ -35,7 +33,7 @@ sap.ui.define([
                     var oStudent = aStudents.find(s => s.id === alloc.studentId);
                     return { 
                         name: oStudent ? oStudent.name : "Unknown",
-                        id: oStudent ? oStudent.id : "" // 需要ID来做下拉框的Key
+                        id: oStudent ? oStudent.id : "" 
                     };
                 });
 
@@ -43,15 +41,14 @@ sap.ui.define([
                 var iCapacity = parseInt(room.capacity || 4);
                 
                 var sStatusText = "Available";
-                var iStatusColor = 8; // Green
+                var iStatusColor = 8; 
                 var sState = "Success";
 
                 if (iOccupied >= iCapacity) {
                     sStatusText = "Full";
-                    iStatusColor = 3; // Red
+                    iStatusColor = 3; 
                     sState = "Error";
                 } else if (iOccupied > 0) {
-                     // 如果有人但没满，设为 warning 颜色
                      iStatusColor = 5; 
                      sState = "Warning";
                 }
@@ -70,6 +67,7 @@ sap.ui.define([
 
             var oViewModel = new JSONModel({
                 roomsWithResidents: aProcessedRooms,
+                selectedAction: "CheckOut",
                 blocks: [
                     { key: "All", text: "All Blocks" },
                     { key: "A", text: "Block A (KTDI)" },
@@ -80,7 +78,6 @@ sap.ui.define([
             this.getView().setModel(oViewModel, "view");
         },
 
-        // === 2. 弹窗逻辑 ===
         onOpenUpdateDialog: function (oEvent) {
             var oButton = oEvent.getSource();
             var oBindingContext = oButton.getBindingContext("view");
@@ -88,7 +85,7 @@ sap.ui.define([
             if (!this.pDialog) {
                 this.pDialog = Fragment.load({
                     id: this.getView().getId(),
-                    name: "project1.view.UpdateDialog", // 确保文件名叫 UpdateDialog.fragment.xml
+                    name: "project1.view.UpdateDialog",
                     controller: this
                 }).then(function (oDialog) {
                     this.getView().addDependent(oDialog);
@@ -97,17 +94,24 @@ sap.ui.define([
             }
 
             this.pDialog.then(function (oDialog) {
-                // 绑定选中的房间数据
                 oDialog.setBindingContext(oBindingContext, "view");
                 
-                // 重置表单
+                var oViewModel = this.getView().getModel("view");
+                oViewModel.setProperty("/selectedAction", "CheckOut");
+
                 this.byId("studentSelect").setSelectedKey(null);
-                this.byId("actionSelect").setSelectedKey("CheckOut"); // 默认 Check Out
+                this.byId("actionSelect").setSelectedKey("CheckOut");
+                this.byId("newRoomSelect").setSelectedKey(null);
                 this.byId("datePicker").setDateValue(new Date());
                 this.byId("reasonInput").setValue("");
                 
                 oDialog.open();
             }.bind(this));
+        },
+
+        onActionChange: function(oEvent) {
+            var sKey = oEvent.getParameter("selectedItem").getKey();
+            this.getView().getModel("view").setProperty("/selectedAction", sKey);
         },
 
         onCloseDialog: function () {
@@ -116,48 +120,67 @@ sap.ui.define([
             });
         },
 
-        // === 3. 确认更新 ===
         onConfirmUpdate: function () {
             var sStudentId = this.byId("studentSelect").getSelectedKey();
             var sAction = this.byId("actionSelect").getSelectedKey();
-            var sReason = this.byId("reasonInput").getValue();
-
+            
             if (!sStudentId) {
-                MessageBox.error("Please select a resident to update.");
+                MessageBox.error("Please select a resident first.");
                 return;
             }
 
-            // 获取当前房间号
-            var oDialog = this.byId("studentSelect").getParent().getParent().getParent();
-            var sRoomNumber = oDialog.getBindingContext("view").getProperty("roomNumber");
+            var oContext = this.byId("studentSelect").getBindingContext("view");
+            var sCurrentRoomNumber = oContext.getProperty("roomNumber");
 
             var oMainModel = this.getOwnerComponent().getModel();
             var aAllocations = oMainModel.getProperty("/allocations");
             var aRooms = oMainModel.getProperty("/rooms");
 
-            if (sAction === "CheckOut") {
-                // --- 执行退房逻辑 ---
-                
-                // 1. 从分配列表里删除该记录
-                var iIndex = aAllocations.findIndex(a => a.studentId === sStudentId && a.roomNumber === sRoomNumber);
-                if (iIndex > -1) {
-                    aAllocations.splice(iIndex, 1);
-                }
-
-                // 2. 房间名额 +1
-                var oRoom = aRooms.find(r => r.roomNumber === sRoomNumber);
-                if (oRoom) {
-                    oRoom.available++;
-                }
-
-                MessageToast.show("Check-out successful for student!");
-
-            } else {
-                // 其他逻辑暂时只是提示
-                MessageToast.show("Update request submitted: " + sAction);
+            var iAllocIndex = aAllocations.findIndex(a => a.studentId === sStudentId && a.roomNumber === sCurrentRoomNumber);
+            if (iAllocIndex === -1) {
+                MessageBox.error("System error: Allocation record not found.");
+                return;
             }
 
-            // 保存数据并刷新
+            if (sAction === "CheckOut") {
+                // === 退房 ===
+                aAllocations.splice(iAllocIndex, 1);
+                
+                var oRoom = aRooms.find(r => r.roomNumber === sCurrentRoomNumber);
+                if (oRoom) oRoom.available++;
+
+                MessageToast.show("Check-out successful!");
+
+            } else if (sAction === "ChangeRoom") {
+                // === 换房 ===
+                var sNewRoomNumber = this.byId("newRoomSelect").getSelectedKey();
+                
+                if (!sNewRoomNumber) {
+                    MessageBox.error("Please select a new target room.");
+                    return;
+                }
+                if (sNewRoomNumber === sCurrentRoomNumber) {
+                    MessageBox.error("Target room cannot be the same as current room.");
+                    return;
+                }
+
+                var oNewRoom = aRooms.find(r => r.roomNumber === sNewRoomNumber);
+                if (!oNewRoom || oNewRoom.available <= 0) {
+                    MessageBox.error("Selected room is full!");
+                    return;
+                }
+
+                aAllocations[iAllocIndex].roomNumber = sNewRoomNumber;
+                aAllocations[iAllocIndex].timestamp = new Date();
+
+                var oOldRoom = aRooms.find(r => r.roomNumber === sCurrentRoomNumber);
+                if (oOldRoom) oOldRoom.available++; 
+                oNewRoom.available--;               
+
+                MessageToast.show("Room changed successfully to " + sNewRoomNumber);
+            }
+
+            // 保存并刷新
             oMainModel.setProperty("/allocations", aAllocations);
             oMainModel.setProperty("/rooms", aRooms);
             

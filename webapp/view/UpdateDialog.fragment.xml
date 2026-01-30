@@ -22,11 +22,20 @@
                 </ComboBox>
 
                 <Label text="Action" design="Bold" class="sapUiTinyMarginTop"/>
-                <Select id="actionSelect" width="100%">
+                <Select id="actionSelect" width="100%" change=".onActionChange">
                     <core:Item key="CheckOut" text="Check Out (Vacate Room)"/>
-                    <core:Item key="Extend" text="Extend Stay"/>
                     <core:Item key="ChangeRoom" text="Request Room Change"/>
                 </Select>
+
+                <Label text="New Target Room" design="Bold" class="sapUiTinyMarginTop" 
+                       visible="{= ${view>/selectedAction} === 'ChangeRoom' }"/>
+                <ComboBox id="newRoomSelect" 
+                    items="{path: '/rooms', sorter: { path: 'roomNumber' }}" 
+                    width="100%" 
+                    placeholder="Select available room..."
+                    visible="{= ${view>/selectedAction} === 'ChangeRoom' }">
+                    <core:Item key="{roomNumber}" text="{roomNumber} (Block {block}) - {available} slots left"/>
+                </ComboBox>
 
                 <Label text="Effective Date" design="Bold" class="sapUiTinyMarginTop"/>
                 <DatePicker id="datePicker" width="100%"/>
