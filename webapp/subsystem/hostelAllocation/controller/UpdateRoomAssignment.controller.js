@@ -120,6 +120,7 @@ sap.ui.define([
             });
         },
 
+       // === 🔥 确认更新 (包含安全检查) 🔥 ===
         onConfirmUpdate: function () {
             var sStudentId = this.byId("studentSelect").getSelectedKey();
             var sAction = this.byId("actionSelect").getSelectedKey();
@@ -129,13 +130,16 @@ sap.ui.define([
                 return;
             }
 
+            // 获取当前房间上下文
             var oContext = this.byId("studentSelect").getBindingContext("view");
             var sCurrentRoomNumber = oContext.getProperty("roomNumber");
 
             var oMainModel = this.getOwnerComponent().getModel();
             var aAllocations = oMainModel.getProperty("/allocations");
             var aRooms = oMainModel.getProperty("/rooms");
+            var aStudents = oMainModel.getProperty("/students"); // 获取学生列表以检查性别
 
+            // 找到当前的分配记录
             var iAllocIndex = aAllocations.findIndex(a => a.studentId === sStudentId && a.roomNumber === sCurrentRoomNumber);
             if (iAllocIndex === -1) {
                 MessageBox.error("System error: Allocation record not found.");
@@ -143,16 +147,17 @@ sap.ui.define([
             }
 
             if (sAction === "CheckOut") {
-                // === 退房 ===
+                // ... (退房逻辑保持不变) ...
                 aAllocations.splice(iAllocIndex, 1);
                 
+                // 记得释放当前房间的空位
                 var oRoom = aRooms.find(r => r.roomNumber === sCurrentRoomNumber);
                 if (oRoom) oRoom.available++;
 
                 MessageToast.show("Check-out successful!");
 
             } else if (sAction === "ChangeRoom") {
-                // === 换房 ===
+                // === 🔥 换房逻辑修复 (关键部分) 🔥 ===
                 var sNewRoomNumber = this.byId("newRoomSelect").getSelectedKey();
                 
                 if (!sNewRoomNumber) {
@@ -164,18 +169,46 @@ sap.ui.define([
                     return;
                 }
 
+                // 1. 🛑 检查目标房间是否已满 (计算实际人数)
+                var iTargetOccupancy = aAllocations.filter(a => a.roomNumber === sNewRoomNumber).length;
                 var oNewRoom = aRooms.find(r => r.roomNumber === sNewRoomNumber);
-                if (!oNewRoom || oNewRoom.available <= 0) {
-                    MessageBox.error("Selected room is full!");
+                var iCapacity = parseInt(oNewRoom.capacity || 4);
+
+                if (iTargetOccupancy >= iCapacity) {
+                    MessageBox.error("Operation Failed: Room " + sNewRoomNumber + " is already FULL (" + iTargetOccupancy + "/" + iCapacity + ")!");
                     return;
                 }
 
+                // 2. 🛑 检查性别是否匹配
+                // 获取当前要移动的学生信息
+                var oStudent = aStudents.find(s => s.id === sStudentId);
+                
+                // 如果目标房间已经有人住了，检查里面的人是什么性别
+                if (iTargetOccupancy > 0) {
+                    // 随便找一个已经住在里面的人
+                    var oFirstRoommateAlloc = aAllocations.find(a => a.roomNumber === sNewRoomNumber);
+                    var oFirstRoommate = aStudents.find(s => s.id === oFirstRoommateAlloc.studentId);
+                    
+                    if (oFirstRoommate && oStudent && oFirstRoommate.gender !== oStudent.gender) {
+                        MessageBox.error("操作失败：性别不匹配！你不能把 " + oStudent.gender + " (学生) 塞进 " + oFirstRoommate.gender + " (室友) 的房间。");
+                        return;
+                    }
+                } else {
+                    // 如果房间是空的，检查房间本身的性别设定 (如果 rooms.json 里有 gender 字段的话)
+                    if (oNewRoom.gender && oNewRoom.gender !== oStudent.gender) {
+                         MessageBox.error("操作失败：该房间仅限 " + oNewRoom.gender + " 入住。");
+                         return;
+                    }
+                }
+
+                // ✅ 所有检查通过，执行换房
                 aAllocations[iAllocIndex].roomNumber = sNewRoomNumber;
                 aAllocations[iAllocIndex].timestamp = new Date();
 
+                // 更新库存数字
                 var oOldRoom = aRooms.find(r => r.roomNumber === sCurrentRoomNumber);
-                if (oOldRoom) oOldRoom.available++; 
-                oNewRoom.available--;               
+                if (oOldRoom) oOldRoom.available++; // 旧房空位+1
+                oNewRoom.available--;               // 新房空位-1
 
                 MessageToast.show("Room changed successfully to " + sNewRoomNumber);
             }
