@@ -1,7 +1,7 @@
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
     "sap/ui/model/json/JSONModel",
-    "project1.subsystem.hostelAllocation.RoomAllocationService"
+    "../RoomAllocationService"
 ], (Controller, JSONModel, RoomAllocationService) => {
     "use strict";
 
