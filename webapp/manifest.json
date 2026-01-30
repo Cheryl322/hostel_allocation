@@ -75,13 +75,6 @@
       },
       "routes": [
         {
-          "name": "RouteView1",
-          "pattern": ":?query:",
-          "target": [
-            "TargetView1"
-          ]
-        },
-        {
           "name": "roomAllocation",
           "pattern": "room-allocation",
           "target": [
@@ -107,6 +100,13 @@
           "pattern": "room-allocation/update",
           "target": [
             "TargetUpdateRoomAssignment"
+          ]
+        },
+        {
+          "name": "RouteView1",
+          "pattern": ":?query:",
+          "target": [
+            "TargetView1"
           ]
         }
       ],
