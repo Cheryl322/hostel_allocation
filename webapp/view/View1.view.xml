@@ -1,16 +1,135 @@
 <mvc:View controllerName="project1.controller.View1"
     xmlns:mvc="sap.ui.core.mvc"
-    xmlns="sap.m">
-    <Page id="page" title="{i18n>title}">
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    xmlns:card="sap.f.cards"
+    xmlns:core="sap.ui.core"
+    xmlns:grid="sap.ui.layout.cssgrid"
+    displayBlock="true">
+
+    <Page title="Hostel Management System Dashboard" backgroundDesign="Solid">
+        
+        <headerContent>
+            <Button icon="sap-icon://bell" tooltip="Notifications"/>
+            <Avatar src="test-resources/sap/tnt/images/User.png" displaySize="XS"/>
+        </headerContent>
+
         <content>
-            <List id="mainMenu" headerText="{i18n>mainMenu}">
-                <StandardListItem
-                    title="{i18n>roomAllocation.title}"
-                    description="{i18n>roomAllocation.menuDescription}"
-                    icon="sap-icon://building"
-                    type="Navigation"
-                    press=".onRoomAllocationPress"/>
-            </List>
+            <VBox class="sapUiSmallMargin">
+                
+                <Title text="Quick Statistics" class="sapUiSmallMarginBottom"/>
+                <grid:CSSGrid gridTemplateColumns="repeat(auto-fit, minmax(14rem, 1fr))" gridGap="1rem">
+                    
+                    <GenericTile header="Hostel Applications" subheader="45 pending review" frameType="OneByOne" press="onPress">
+                        <TileContent>
+                            <NumericContent value="245" icon="sap-icon://request" valueColor="Good"/>
+                        </TileContent>
+                    </GenericTile>
+
+                    <GenericTile header="Maintenance Requests" subheader="23 in progress" frameType="OneByOne">
+                        <TileContent>
+                            <NumericContent value="67" icon="sap-icon://wrench" valueColor="Critical"/>
+                        </TileContent>
+                    </GenericTile>
+
+                    <GenericTile header="Occupied Rooms" subheader="Out of 1,248 total" frameType="OneByOne">
+                        <TileContent>
+                            <NumericContent value="1,092" icon="sap-icon://bed" valueColor="Neutral"/>
+                        </TileContent>
+                    </GenericTile>
+
+                    <GenericTile header="Revenue Collected" subheader="This semester" frameType="OneByOne">
+                        <TileContent>
+                            <NumericContent value="970k" scale="RM" icon="sap-icon://money-bills" valueColor="Good"/>
+                        </TileContent>
+                    </GenericTile>
+
+                </grid:CSSGrid>
+
+                <grid:CSSGrid gridTemplateColumns="2fr 1fr" gridGap="1rem" class="sapUiMediumMarginTop">
+                    
+                    <VBox>
+                        <f:Card class="sapUiSmallMarginBottom">
+                            <f:header>
+                                <card:Header title="Recent Applications" subtitle="View All" iconSrc="sap-icon://list"/>
+                            </f:header>
+                            <f:content>
+                                <List items="{dashboard>/recentApplications}">
+                                    <ObjectListItem title="{dashboard>name}"
+                                        type="Active"
+                                        number="{dashboard>date}"
+                                        intro="{dashboard>id}">
+                                        <firstStatus>
+                                            <ObjectStatus text="{dashboard>status}" state="{dashboard>state}"/>
+                                        </firstStatus>
+                                    </ObjectListItem>
+                                </List>
+                            </f:content>
+                        </f:Card>
+
+                        <f:Card>
+                            <f:header>
+                                <card:Header title="Room Allocation Status" iconSrc="sap-icon://building"/>
+                            </f:header>
+                            <f:content>
+                                <VBox class="sapUiSmallMargin">
+                                    <Label text="Block A (KTDI) - 90% Occupied"/>
+                                    <ProgressIndicator percentValue="90" displayValue="90%" state="Success"/>
+                                    
+                                    <Label text="Block B (KTC) - 88% Occupied" class="sapUiSmallMarginTop"/>
+                                    <ProgressIndicator percentValue="88" displayValue="88%" state="Warning"/>
+                                    
+                                    <Label text="Block C (KTR) - 92% Occupied" class="sapUiSmallMarginTop"/>
+                                    <ProgressIndicator percentValue="92" displayValue="92%" state="Success"/>
+                                </VBox>
+                            </f:content>
+                        </f:Card>
+                    </VBox>
+
+                    <VBox>
+                        <f:Card class="sapUiSmallMarginBottom">
+                            <f:header>
+                                <card:Header title="Maintenance Requests" iconSrc="sap-icon://tools-opportunity"/>
+                            </f:header>
+                            <f:content>
+                                <List items="{dashboard>/maintenance}">
+                                    <StandardListItem title="{dashboard>issue}" 
+                                        description="{dashboard>location}" 
+                                        info="{dashboard>priority}" 
+                                        infoState="{dashboard>state}"/>
+                                </List>
+                            </f:content>
+                        </f:Card>
+
+                        <f:Card>
+                            <f:header>
+                                <card:Header title="Outstanding Alerts" iconSrc="sap-icon://alert"/>
+                            </f:header>
+                            <f:content>
+                                <VBox class="sapUiSmallMargin">
+                                    <MessageStrip text="23 Students with overdue payments (> 30 days)" type="Error" class="sapUiTinyMarginBottom" showIcon="true"/>
+                                    <MessageStrip text="67 Students with pending payments (15-30 days)" type="Warning" class="sapUiTinyMarginBottom" showIcon="true"/>
+                                    <MessageStrip text="156 Students with current outstanding balance" type="Information" showIcon="true"/>
+                                </VBox>
+                            </f:content>
+                        </f:Card>
+
+                        <f:Card class="sapUiSmallMarginTop">
+                            <f:header>
+                                <card:Header title="Quick Actions"/>
+                            </f:header>
+                            <f:content>
+                                <List>
+                                    <StandardListItem title="Allocate Room" type="Navigation" press="onNavToAllocate"/>
+                                    <StandardListItem title="View Availability" type="Navigation" press="onNavToView"/>
+                                    <StandardListItem title="Update Assignment" type="Navigation" press="onNavToUpdate"/>
+                                </List>
+                            </f:content>
+                        </f:Card>
+                    </VBox>
+
+                </grid:CSSGrid>
+            </VBox>
         </content>
     </Page>
 </mvc:View>
