@@ -1,36 +1,135 @@
 <mvc:View controllerName="project1.subsystem.hostelAllocation.controller.ViewRoomAvailability"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
-    xmlns:core="sap.ui.core"
     xmlns:f="sap.f"
-    xmlns:grid="sap.ui.layout.cssgrid">
-    <Page id="viewRoomAvailabilityPage"
-        title="{i18n>roomAllocation.viewRoomAvailability}"
-        showNavButton="true"
-        navButtonPress=".onNavBack">
+    xmlns:card="sap.f.cards"
+    xmlns:core="sap.ui.core"
+    xmlns:grid="sap.ui.layout.cssgrid"
+    xmlns:tnt="sap.tnt">
+
+    <Page title="Room Allocation" backgroundDesign="Solid" showHeader="true">
+        <headerContent>
+             <Title text="Manage room availability, allocations, and assignments" level="H6" class="sapUiTinyMarginTop"/>
+        </headerContent>
+
         <content>
-            <MessageStrip id="noDataMessage"
-                text="{i18n>roomAllocation.noRoomInfo}"
-                type="Warning"
-                visible="false"
-                class="sapUiMediumMarginBottom"/>
-            <List id="roomList"
-                items="{/rooms}"
-                growing="true"
-                growingScrollToLoad="true">
-                <headerToolbar>
-                    <OverflowToolbar>
-                        <Title text="{i18n>roomAllocation.roomList}" level="H2"/>
-                        <ToolbarSpacer/>
-                    </OverflowToolbar>
-                </headerToolbar>
-                <StandardListItem
-                    title="{id}"
-                    description="{building} - Floor {floor} | {i18n>roomAllocation.capacity}: {occupied}/{capacity}"
-                    info="{status}"
-                    infoState="{= ${status} === 'Available' ? 'Success' : 'Warning' }"
-                    type="Active"/>
-            </List>
+            <VBox class="sapUiSmallMargin">
+
+                <grid:CSSGrid gridTemplateColumns="repeat(auto-fit, minmax(14rem, 1fr))" gridGap="1rem">
+                    
+                    <f:Card class="sapUiTinyMarginBeginEnd">
+                        <f:content>
+                            <HBox alignItems="Center" class="sapUiSmallMargin">
+                                <core:Icon src="sap-icon://building" size="2.5rem" color="#3b5998" class="sapUiMediumMarginEnd"/>
+                                <VBox>
+                                    <Title text="{view>/stats/totalRooms}" level="H1"/>
+                                    <Label text="Total Rooms"/>
+                                </VBox>
+                            </HBox>
+                        </f:content>
+                    </f:Card>
+
+                    <f:Card class="sapUiTinyMarginBeginEnd">
+                        <f:content>
+                            <HBox alignItems="Center" class="sapUiSmallMargin">
+                                <core:Icon src="sap-icon://bed" size="2.5rem" color="#2ecc71" class="sapUiMediumMarginEnd"/>
+                                <VBox>
+                                    <Title text="{view>/stats/availableRooms}" level="H1" class="sapTextPositive"/>
+                                    <Label text="Available Rooms"/>
+                                </VBox>
+                            </HBox>
+                        </f:content>
+                    </f:Card>
+
+                    <f:Card class="sapUiTinyMarginBeginEnd">
+                        <f:content>
+                            <HBox alignItems="Center" class="sapUiSmallMargin">
+                                <core:Icon src="sap-icon://group" size="2.5rem" color="#e74c3c" class="sapUiMediumMarginEnd"/>
+                                <VBox>
+                                    <Title text="{view>/stats/occupiedRooms}" level="H1" class="sapTextNegative"/>
+                                    <Label text="Occupied Rooms"/>
+                                </VBox>
+                            </HBox>
+                        </f:content>
+                    </f:Card>
+
+                    <f:Card class="sapUiTinyMarginBeginEnd">
+                        <f:content>
+                            <HBox alignItems="Center" class="sapUiSmallMargin">
+                                <core:Icon src="sap-icon://pie-chart" size="2.5rem" color="#f39c12" class="sapUiMediumMarginEnd"/>
+                                <VBox>
+                                    <Title text="{view>/stats/occupancyRate}%" level="H1"/>
+                                    <Label text="Occupancy Rate"/>
+                                </VBox>
+                            </HBox>
+                        </f:content>
+                    </f:Card>
+                </grid:CSSGrid>
+
+                <OverflowToolbar class="sapUiMediumMarginTopBottom">
+                    <SearchField width="40%" placeholder="Search by room number or block..." liveChange=".onSearch"/>
+                    <ToolbarSpacer/>
+                    <Button icon="sap-icon://filter" type="Transparent"/>
+                    <ComboBox placeholder="All Blocks" items="{view>/blocks}" selectionChange=".onFilterBlock">
+                        <core:Item key="{view>key}" text="{view>text}"/>
+                    </ComboBox>
+                </OverflowToolbar>
+
+                <grid:CSSGrid id="roomGrid" items="{view>/roomsWithResidents}" 
+                    gridTemplateColumns="repeat(auto-fill, minmax(20rem, 1fr))" 
+                    gridGap="1rem">
+                    
+                    <f:Card width="100%">
+                        <f:content>
+                            <VBox class="sapUiMediumMargin">
+                                <HBox justifyContent="SpaceBetween" alignItems="Start">
+                                    <VBox>
+                                        <Label text="Block {view>block} ({view>building})" design="Bold" class="sapUiTinyMarginBottom"/>
+                                        <Title text="Room {view>roomNumber}" level="H3" class="sapTextHighlight"/>
+                                    </VBox>
+                                    <tnt:InfoLabel text="{view>statusText}" colorScheme="{view>statusColor}"/>
+                                </HBox>
+
+                                <Separator class="sapUiSmallMarginTopBottom"/>
+
+                                <HBox justifyContent="SpaceBetween">
+                                    <VBox>
+                                        <Label text="Floor" class="sapUiTinyMarginBottom"/>
+                                        <Text text="{view>floor}"/>
+                                    </VBox>
+                                    <VBox>
+                                        <Label text="Capacity" class="sapUiTinyMarginBottom"/>
+                                        <Text text="{view>capacity} students"/>
+                                    </VBox>
+                                    <VBox alignItems="End">
+                                        <Label text="Occupied" class="sapUiTinyMarginBottom"/>
+                                        <Text text="{view>occupied}/{view>capacity}"/>
+                                    </VBox>
+                                </HBox>
+
+                                <ProgressIndicator 
+                                    percentValue="{view>occupancyPercent}" 
+                                    state="{view>state}" 
+                                    displayValue="{view>occupancyPercent}%"
+                                    class="sapUiSmallMarginTopBottom"/>
+
+                                <Label text="Current Residents:" design="Bold" visible="{= ${view>occupied} > 0 }"/>
+                                <List items="{view>residents}" visible="{= ${view>occupied} > 0 }" showSeparators="None">
+                                    <CustomListItem>
+                                        <HBox alignItems="Center">
+                                            <core:Icon src="sap-icon://person-placeholder" size="0.8rem" class="sapUiTinyMarginEnd" color="#888"/>
+                                            <Text text="{view>name}" class="sapUiTinyMarginBottom"/>
+                                        </HBox>
+                                    </CustomListItem>
+                                </List>
+                                <Text text="No residents yet" visible="{= ${view>occupied} === 0 }" class="sapUiTinyMarginTop" type="Secondary"/>
+
+                            </VBox>
+                        </f:content>
+                    </f:Card>
+                </grid:CSSGrid>
+
+            </VBox>
         </content>
     </Page>
 </mvc:View>

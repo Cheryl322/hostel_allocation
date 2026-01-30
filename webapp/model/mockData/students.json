@@ -2,27 +2,83 @@
   "students": [
     {
       "id": "S001",
-      "name": "Ahmad bin Ali",
-      "studentId": "2024001",
-      "applicationStatus": "Approved",
-      "assignedRoom": "R001",
-      "gender": "Male"
+      "studentId": "AI190001",
+      "name": "AHMAD ZAKI BIN MOHD ALI",
+      "gender": "Male",
+      "status": "Active",
+      "paymentStatus": "Paid"
     },
     {
       "id": "S002",
-      "name": "Siti Nurhaliza",
-      "studentId": "2024002",
-      "applicationStatus": "Approved",
-      "assignedRoom": null,
-      "gender": "Female"
+      "studentId": "CF190023",
+      "name": "SITI AISYAH BINTI RAHMAN",
+      "gender": "Female",
+      "status": "Active",
+      "paymentStatus": "Pending"
     },
     {
       "id": "S003",
-      "name": "Muhammad Hafiz",
-      "studentId": "2024003",
-      "applicationStatus": "Approved",
-      "assignedRoom": "R004",
-      "gender": "Male"
+      "studentId": "BI190012",
+      "name": "MUHAMMAD HAIKAL BIN ISMAIL",
+      "gender": "Male",
+      "status": "Active",
+      "paymentStatus": "Paid"
+    },
+    {
+      "id": "S004",
+      "studentId": "DI190045",
+      "name": "NURUL HUDA BINTI ABDULLAH",
+      "gender": "Female",
+      "status": "Inactive",
+      "paymentStatus": "Overdue"
+    },
+    {
+      "id": "S005",
+      "studentId": "AI190088",
+      "name": "LEE WEI KANG",
+      "gender": "Male",
+      "status": "Active",
+      "paymentStatus": "Paid"
+    },
+    {
+      "id": "S006",
+      "studentId": "CF190099",
+      "name": "TAN MEI LING",
+      "gender": "Female",
+      "status": "Active",
+      "paymentStatus": "Paid"
+    },
+    {
+      "id": "S007",
+      "studentId": "EE190033",
+      "name": "MUTHU A/L RAMASAMY",
+      "gender": "Male",
+      "status": "Active",
+      "paymentStatus": "Pending"
+    },
+    {
+      "id": "S008",
+      "studentId": "EE190034",
+      "name": "AHMAD FAIZ BIN HASSAN",
+      "gender": "Male",
+      "status": "Active",
+      "paymentStatus": "Paid"
+    },
+    {
+      "id": "S009",
+      "studentId": "EE190035",
+      "name": "SITI NURHALIZA BINTI AHMAD",
+      "gender": "Female",
+      "status": "Active",
+      "paymentStatus": "Paid"
+    },
+    {
+      "id": "S010",
+      "studentId": "EE190036",
+      "name": "NURUL AINA BINTI ISMAIL",
+      "gender": "Female",
+      "status": "Active",
+      "paymentStatus": "Pending"
     }
   ]
 }

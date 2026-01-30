@@ -1,49 +1,94 @@
 {
   "rooms": [
     {
-      "id": "R001",
-      "building": "Block A",
+      "roomNumber": "101",
+      "block": "A",
+      "building": "KTDI",
       "floor": 1,
-      "capacity": 2,
-      "occupied": 1,
-      "status": "Available",
-      "gender": "Male"
+      "capacity": 4,
+      "available": 4,
+      "gender": "Male",
+      "status": "Available"
     },
     {
-      "id": "R002",
-      "building": "Block A",
+      "roomNumber": "102",
+      "block": "A",
+      "building": "KTDI",
       "floor": 1,
-      "capacity": 2,
-      "occupied": 2,
-      "status": "Full",
-      "gender": "Male"
+      "capacity": 4,
+      "available": 3,
+      "gender": "Female",
+      "status": "Available"
     },
     {
-      "id": "R003",
-      "building": "Block A",
+      "roomNumber": "103",
+      "block": "A",
+      "building": "KTDI",
+      "floor": 1,
+      "capacity": 4,
+      "available": 2,
+      "gender": "Male",
+      "status": "Available"
+    },
+    {
+      "roomNumber": "104",
+      "block": "A",
+      "building": "KTDI",
+      "floor": 1,
+      "capacity": 4,
+      "available": 0,
+      "gender": "Male",
+      "status": "Full"
+    },
+    {
+      "roomNumber": "201",
+      "block": "A",
+      "building": "KTDI",
       "floor": 2,
-      "capacity": 2,
-      "occupied": 0,
-      "status": "Available",
-      "gender": "Female"
+      "capacity": 4,
+      "available": 4,
+      "gender": "Female",
+      "status": "Available"
     },
     {
-      "id": "R004",
-      "building": "Block B",
-      "floor": 1,
-      "capacity": 2,
-      "occupied": 1,
-      "status": "Available",
-      "gender": "Male"
-    },
-    {
-      "id": "R005",
-      "building": "Block B",
+      "roomNumber": "202",
+      "block": "A",
+      "building": "KTDI",
       "floor": 2,
-      "capacity": 2,
-      "occupied": 0,
-      "status": "Available",
-      "gender": "Female"
+      "capacity": 4,
+      "available": 1,
+      "gender": "Male",
+      "status": "Available"
+    },
+    {
+      "roomNumber": "101-B",
+      "block": "B",
+      "building": "KTC",
+      "floor": 1,
+      "capacity": 4,
+      "available": 4,
+      "gender": "Male",
+      "status": "Available"
+    },
+    {
+      "roomNumber": "102-B",
+      "block": "B",
+      "building": "KTC",
+      "floor": 1,
+      "capacity": 4,
+      "available": 2,
+      "gender": "Female",
+      "status": "Available"
+    },
+    {
+      "roomNumber": "101-C",
+      "block": "C",
+      "building": "KTR",
+      "floor": 1,
+      "capacity": 4,
+      "available": 4,
+      "gender": "Male",
+      "status": "Available"
     }
   ]
 }
