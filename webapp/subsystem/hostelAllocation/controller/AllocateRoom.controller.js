@@ -1,127 +1,186 @@
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
     "sap/ui/model/json/JSONModel",
+    "sap/ui/core/Fragment",
     "sap/m/MessageToast",
-    "sap/m/MessageBox"
-], function (Controller, JSONModel, MessageToast, MessageBox) {
+    "sap/m/MessageBox",
+    "sap/ui/model/Filter",
+    "sap/ui/model/FilterOperator"
+], function (Controller, JSONModel, Fragment, MessageToast, MessageBox, Filter, FilterOperator) {
     "use strict";
 
     return Controller.extend("project1.subsystem.hostelAllocation.controller.AllocateRoom", {
         
         onInit: function () {
-            // View Model 用于绑定下拉框的选择状态
+            var oRouter = this.getOwnerComponent().getRouter();
+            oRouter.getRoute("allocateRoom").attachPatternMatched(this._onObjectMatched, this);
+        },
+
+        _onObjectMatched: function () {
+            this._refreshData();
+        },
+
+        // === 1. 数据准备逻辑 (和 ViewRoomAvailability 类似) ===
+        _refreshData: function () {
+            var oMainModel = this.getOwnerComponent().getModel();
+            var aRooms = oMainModel.getProperty("/rooms") || [];
+            var aAllocations = oMainModel.getProperty("/allocations") || [];
+            var aStudents = oMainModel.getProperty("/students") || [];
+
+            // 处理房间数据，塞入住户信息
+            var aProcessedRooms = aRooms.map(function (room) {
+                var aRoomAllocations = aAllocations.filter(a => a.roomNumber === room.roomNumber);
+                
+                var aResidents = aRoomAllocations.map(alloc => {
+                    var oStudent = aStudents.find(s => s.id === alloc.studentId);
+                    return { name: oStudent ? oStudent.name : "Unknown" };
+                });
+
+                var iOccupied = aRoomAllocations.length;
+                var iCapacity = parseInt(room.capacity || 4);
+                
+                var sStatusText = "Available";
+                var iStatusColor = 8; // Green
+                var sState = "Success";
+
+                if (iOccupied >= iCapacity) {
+                    sStatusText = "Full";
+                    iStatusColor = 3; // Red
+                    sState = "Error";
+                }
+
+                return {
+                    ...room, // 保留原有的 block, building 等信息
+                    occupied: iOccupied,
+                    available: iCapacity - iOccupied,
+                    occupancyPercent: (iOccupied / iCapacity) * 100,
+                    residents: aResidents,
+                    statusText: sStatusText,
+                    statusColor: iStatusColor,
+                    state: sState
+                };
+            });
+
             var oViewModel = new JSONModel({
-                selectedStudentId: "",
-                selectedRoomId: ""
+                roomsWithResidents: aProcessedRooms,
+                blocks: [
+                    { key: "All", text: "All Blocks" },
+                    { key: "A", text: "Block A (KTDI)" },
+                    { key: "B", text: "Block B (KTC)" },
+                    { key: "C", text: "Block C (KTR)" }
+                ]
             });
             this.getView().setModel(oViewModel, "view");
+        },
 
-            // 等待主数据加载 (students/rooms)
-            this.getOwnerComponent().getModel().dataLoaded().then(function() {
-                this._refreshForm();
+        // === 2. 弹窗逻辑 (Fragment) ===
+        
+        onOpenAllocateDialog: function (oEvent) {
+            var oButton = oEvent.getSource();
+            var oBindingContext = oButton.getBindingContext("view"); // 获取被点击卡片的数据
+            
+            // 加载 Fragment
+            if (!this.pDialog) {
+                this.pDialog = Fragment.load({
+                    id: this.getView().getId(),
+                    name: "project1.view.AllocateDialog", // ⚠️ 确保路径对：view文件夹下的AllocateDialog.fragment.xml
+                    controller: this
+                }).then(function (oDialog) {
+                    this.getView().addDependent(oDialog);
+                    return oDialog;
+                }.bind(this));
+            }
+
+            this.pDialog.then(function (oDialog) {
+                // 将弹窗绑定到被点击的房间数据上 (这样顶部蓝框才会显示 Room 104)
+                oDialog.setBindingContext(oBindingContext, "view");
+                
+                // 清空表单
+                this.byId("studentInput").setSelectedKey(null);
+                this.byId("dateInput").setValue(new Date()); // 默认今天
+                this.byId("remarksInput").setValue("");
+                
+                oDialog.open();
             }.bind(this));
         },
 
-        onStudentChange: function () {
-            this._updateConfirmButton();
+        onCloseDialog: function () {
+            this.byId("studentInput").setValue(""); // Clear input
+            this.pDialog.then(function (oDialog) {
+                oDialog.close();
+            });
         },
 
-        onRoomChange: function () {
-            this._updateConfirmButton();
-        },
+        // === 3. 确认分配 (Save) ===
+        onConfirmDialog: function () {
+            // 1. 获取输入数据
+            var sStudentKey = this.byId("studentInput").getSelectedKey();
+            var oDate = this.byId("dateInput").getDateValue();
 
-        _updateConfirmButton: function () {
-            var oViewModel = this.getView().getModel("view");
-            var sStudent = oViewModel.getProperty("/selectedStudentId");
-            var sRoom = oViewModel.getProperty("/selectedRoomId");
-            this.byId("confirmAllocateBtn").setEnabled(!!sStudent && !!sRoom);
-        },
-
-        // 🔥 核心保存逻辑 🔥
-        onConfirmAllocation: function () {
-            var oViewModel = this.getView().getModel("view");
-            var sStudentId = oViewModel.getProperty("/selectedStudentId");
-            var sRoomId = oViewModel.getProperty("/selectedRoomId");
-
-            if (!sStudentId || !sRoomId) return;
-
-            // 1. 获取主模型 (这是所有页面共享数据的唯一地方)
-            var oMainModel = this.getOwnerComponent().getModel(); 
-            var aStudents = oMainModel.getProperty("/students");
-            var aRooms = oMainModel.getProperty("/rooms");
-            var aAllocations = oMainModel.getProperty("/allocations") || []; // 确保有这个数组
-
-            // 2. 找到对应数据对象
-            var oStudent = aStudents.find(function(s) { return s.id === sStudentId; });
-            var oRoom = aRooms.find(function(r) { return r.roomNumber === sRoomId; });
-
-            // 3. 校验逻辑
-            if (oRoom.available <= 0) {
-                MessageBox.error("该房间已满！");
+            if (!sStudentKey) {
+                MessageBox.error("Please select a student.");
                 return;
             }
 
-            // 4. 📝 真正写入数据 (这一步至关重要！)
-            
-            // 扣减房间名额
-            oRoom.available--; 
+            // 2. 获取当前房间信息 (从弹窗的 Context 获取)
+            var oDialog = this.byId("studentInput").getParent().getParent().getParent(); // 笨办法找Dialog，或者直接用绑定的Context
+            // 更好的方法：
+            var oContext = this.pDialog.then(async (oDialog) => {
+                 var oRoomData = oDialog.getBindingContext("view").getObject();
+                 
+                 // 3. 开始保存
+                 var oMainModel = this.getOwnerComponent().getModel();
+                 var aAllocations = oMainModel.getProperty("/allocations");
+                 var aRooms = oMainModel.getProperty("/rooms");
 
-            // 添加分配记录到共享数组
-            aAllocations.push({
-                studentId: oStudent.id,
-                studentName: oStudent.name,
-                roomNumber: oRoom.roomNumber,
-                timestamp: new Date()
+                 // 检查学生是否已经有房间了
+                 var bAlreadyAssigned = aAllocations.some(a => a.studentId === sStudentKey);
+                 if (bAlreadyAssigned) {
+                     MessageBox.error("This student already has a room!");
+                     return;
+                 }
+
+                 // 更新主数据
+                 var oRoom = aRooms.find(r => r.roomNumber === oRoomData.roomNumber);
+                 if (oRoom) {
+                     oRoom.available--; 
+                 }
+
+                 var aStudents = oMainModel.getProperty("/students");
+                 var oStudent = aStudents.find(s => s.id === sStudentKey);
+
+                 aAllocations.push({
+                     studentId: sStudentKey,
+                     studentName: oStudent.name,
+                     roomNumber: oRoomData.roomNumber,
+                     date: oDate,
+                     timestamp: new Date()
+                 });
+
+                 // 保存回 Model
+                 oMainModel.setProperty("/rooms", aRooms);
+                 oMainModel.setProperty("/allocations", aAllocations);
+
+                 MessageToast.show("Room Allocated Successfully!");
+                 
+                 // 关闭弹窗并刷新
+                 oDialog.close();
+                 this._refreshData();
             });
-
-            // 5. 保存回主模型 (Update页面是读这里的！)
-            oMainModel.setProperty("/rooms", aRooms);
-            oMainModel.setProperty("/allocations", aAllocations);
-
-            // 6. 界面反馈
-            // 隐藏旧的 MessageStrip (如果你 XML 里还有的话)
-            if(this.byId("successMessage")) this.byId("successMessage").setVisible(false);
-            
-            // 使用 MessageToast 提示
-            MessageToast.show("分配成功！数据已保存。");
-            
-            // 7. 刷新当前页面 (移除已分配的学生)
-            this._refreshForm();
-        },
-
-        _refreshForm: function () {
-            var oMainModel = this.getOwnerComponent().getModel();
-            if (!oMainModel) return;
-
-            var aStudents = oMainModel.getProperty("/students") || [];
-            var aRooms = oMainModel.getProperty("/rooms") || [];
-            var aAllocations = oMainModel.getProperty("/allocations") || [];
-
-            // 过滤掉已经有房间的学生
-            var aUnassignedStudents = aStudents.filter(function(student) {
-                return !aAllocations.some(function(allocation) {
-                    return allocation.studentId === student.id;
-                });
-            });
-
-            // 过滤掉已满的房间
-            var aAvailableRooms = aRooms.filter(function(room) {
-                return room.available > 0;
-            });
-
-            // 更新 View Model 供 XML 显示
-            var oViewModel = this.getView().getModel("view");
-            oViewModel.setProperty("/students", aUnassignedStudents);
-            oViewModel.setProperty("/availableRooms", aAvailableRooms);
-            
-            // 清空选择
-            oViewModel.setProperty("/selectedStudentId", "");
-            oViewModel.setProperty("/selectedRoomId", "");
-            this._updateConfirmButton();
         },
 
         onNavBack: function () {
-            this.getOwnerComponent().getRouter().navTo("roomAllocation");
+            this.getOwnerComponent().getRouter().navTo("RouteView1");
+        },
+
+        onSearch: function (oEvent) {
+            var sQuery = oEvent.getParameter("newValue");
+            var aFilters = [];
+            if (sQuery && sQuery.length > 0) {
+                aFilters.push(new Filter("roomNumber", FilterOperator.Contains, sQuery));
+            }
+            var oGrid = this.byId("roomGrid");
+            oGrid.getBinding("items").filter(aFilters);
         }
     });
 });

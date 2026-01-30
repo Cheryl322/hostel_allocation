@@ -139,6 +139,11 @@ sap.ui.define([
             var oGrid = this.byId("roomGrid");
             var oBinding = oGrid.getBinding("items");
             oBinding.filter(aFilters);
+        },
+
+        onNavBack: function () {
+            this.getOwnerComponent().getRouter().navTo("RouteView1");
         }
+
     });
 });

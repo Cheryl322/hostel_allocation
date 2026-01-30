@@ -84,15 +84,15 @@
           "target": ["TargetRoomAllocation"]
         },
         {
-          "name": "viewRoomAvailability",
-          "pattern": "room-allocation/view-availability",
-          "target": ["TargetViewRoomAvailability"] 
+          "name": "allocateRoom",
+          "pattern": "room-allocation/allocate",
+          "target": ["TargetAllocateRoom"] 
           
         },
         {
-          "name": "allocateRoom",
-          "pattern": "room-allocation/allocate",
-          "target": ["TargetAllocateRoom"]
+          "name": "viewRoomAvailability",
+          "pattern": "room-allocation/view-availability",
+          "target": ["TargetViewRoomAvailability"] 
           
         },
         {
@@ -112,14 +112,14 @@
           "name": "RoomAllocation",
           "path": "project1.subsystem.hostelAllocation.view"
         },
-        "TargetViewRoomAvailability": {
-          "id": "ViewRoomAvailability",
-          "name": "ViewRoomAvailability",
-          "path": "project1.subsystem.hostelAllocation.view"
-        },
         "TargetAllocateRoom": {
           "id": "AllocateRoom",
           "name": "AllocateRoom",
+          "path": "project1.subsystem.hostelAllocation.view"
+        },
+        "TargetViewRoomAvailability": {
+          "id": "ViewRoomAvailability",
+          "name": "ViewRoomAvailability",
           "path": "project1.subsystem.hostelAllocation.view"
         },
         "TargetUpdateRoomAssignment": {

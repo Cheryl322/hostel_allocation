@@ -1,0 +1,46 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:form="sap.ui.layout.form">
+    <Dialog title="Allocate Room" contentWidth="400px">
+        
+        <content>
+            <VBox class="sapUiSmallMargin">
+                
+                <VBox class="sapUiSmallMarginBottom sapUiTinyMarginTop" backgroundDesign="Solid" style="background-color: #f5f9ff; padding: 1rem; border-radius: 5px;">
+                    <Title text="Block {view>block} ({view>building}) - Room {view>roomNumber}" level="H5" class="sapUiTinyMarginBottom"/>
+                    <Text text="Available spaces: {view>available} / {view>capacity}" type="Secondary"/>
+                </VBox>
+
+                <Label text="Student ID/Name" design="Bold" class="sapUiTinyMarginTop"/>
+                <ComboBox id="studentInput" 
+                    items="{/students}" 
+                    width="100%" 
+                    placeholder="Select or type student...">
+                    <core:Item key="{id}" text="{name} ({studentId})"/>
+                </ComboBox>
+
+                <Label text="Session" design="Bold" class="sapUiTinyMarginTop"/>
+                <Select id="sessionInput" width="100%">
+                    <core:Item key="2025-S1" text="2025/2026 Semester 1"/>
+                    <core:Item key="2025-S2" text="2025/2026 Semester 2"/>
+                </Select>
+
+                <Label text="Allocation Date" design="Bold" class="sapUiTinyMarginTop"/>
+                <DatePicker id="dateInput" width="100%"/>
+
+                <Label text="Remarks (Optional)" design="Bold" class="sapUiTinyMarginTop"/>
+                <TextArea id="remarksInput" width="100%" rows="3" placeholder="Add any notes..."/>
+
+            </VBox>
+        </content>
+
+        <beginButton>
+            <Button text="Cancel" press=".onCloseDialog"/>
+        </beginButton>
+        <endButton>
+            <Button text="Allocate Room" type="Emphasized" press=".onConfirmDialog"/>
+        </endButton>
+
+    </Dialog>
+</core:FragmentDefinition>

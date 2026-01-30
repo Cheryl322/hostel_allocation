@@ -1,63 +1,72 @@
 <mvc:View controllerName="project1.subsystem.hostelAllocation.controller.AllocateRoom"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
-    xmlns:core="sap.ui.core"
     xmlns:f="sap.f"
-    xmlns:form="sap.ui.layout.form">
-    <Page id="allocateRoomPage"
-        title="{i18n>roomAllocation.allocateRoom}"
-        showNavButton="true"
-        navButtonPress=".onNavBack">
+    xmlns:grid="sap.ui.layout.cssgrid"
+    xmlns:core="sap.ui.core"
+    xmlns:tnt="sap.tnt">
+
+    <Page title="Room Allocation" showNavButton="true" navButtonPress=".onNavBack">
+        
+        <headerContent>
+             <Title text="Manage Allocations" level="H6"/>
+        </headerContent>
+
         <content>
-            <MessageStrip id="noRoomMessage"
-                text="{i18n>roomAllocation.noAvailableRoom}"
-                type="Error"
-                visible="false"
-                class="sapUiMediumMarginBottom"/>
-            <MessageStrip id="successMessage"
-                text="{i18n>roomAllocation.roomAllocatedSuccess}"
-                type="Success"
-                visible="false"
-                class="sapUiMediumMarginBottom"/>
-            <VBox class="sapUiMediumMargin">
-                <form:SimpleForm id="allocateForm"
-                    editable="true"
-                    layout="ResponsiveGridLayout"
-                    labelSpanXL="4"
-                    labelSpanL="4"
-                    labelSpanM="4"
-                    labelSpanS="12"
-                    emptySpanXL="0"
-                    emptySpanL="0"
-                    emptySpanM="0"
-                    emptySpanS="0"
-                    columnsXL="1"
-                    columnsL="1"
-                    columnsM="1"
-                    singleContainerFullSize="false">
-                    <form:content>
-                        <Label text="{i18n>roomAllocation.selectStudent}"/>
-                        <Select id="studentSelect"
-                            selectedKey="{/selectedStudentId}"
-                            change=".onStudentChange"
-                            items="{/students}">
-                            <core:Item key="{id}" text="{name} ({studentId})"/>
-                        </Select>
-                        <Label text="{i18n>roomAllocation.selectRoom}"/>
-                        <Select id="roomSelect"
-                            selectedKey="{/selectedRoomId}"
-                            change=".onRoomChange"
-                            items="{/availableRooms}">
-                            <core:Item key="{id}" text="{id} - {building} Floor {floor} ({status})"/>
-                        </Select>
-                    </form:content>
-                </form:SimpleForm>
-                <Button id="confirmAllocateBtn"
-                    text="{i18n>roomAllocation.confirmAllocation}"
-                    type="Emphasized"
-                    press=".onConfirmAllocation"
-                    enabled="false"
-                    class="sapUiMediumMarginTop"/>
+            <VBox class="sapUiSmallMargin">
+
+                <OverflowToolbar class="sapUiMediumMarginBottom">
+                    <SearchField width="40%" placeholder="Search room..." liveChange=".onSearch"/>
+                    <ToolbarSpacer/>
+                    <ComboBox placeholder="All Blocks" items="{view>/blocks}" selectionChange=".onFilterBlock">
+                        <core:Item key="{view>key}" text="{view>text}"/>
+                    </ComboBox>
+                </OverflowToolbar>
+
+                <grid:CSSGrid id="roomGrid" items="{view>/roomsWithResidents}" 
+                    gridTemplateColumns="repeat(auto-fill, minmax(20rem, 1fr))" 
+                    gridGap="1rem">
+                    
+                    <f:Card width="100%">
+                        <f:content>
+                            <VBox class="sapUiMediumMargin">
+                                <HBox justifyContent="SpaceBetween" alignItems="Start">
+                                    <VBox>
+                                        <Label text="Block {view>block} ({view>building})" design="Bold"/>
+                                        <Title text="Room {view>roomNumber}" level="H3"/>
+                                    </VBox>
+                                    <tnt:InfoLabel text="{view>statusText}" colorScheme="{view>statusColor}"/>
+                                </HBox>
+
+                                <Separator class="sapUiSmallMarginTopBottom"/>
+
+                                <HBox justifyContent="SpaceBetween" class="sapUiTinyMarginBottom">
+                                    <Text text="Floor: {view>floor}"/>
+                                    <Text text="Capacity: {view>capacity}"/>
+                                    <Text text="Occupied: {view>occupied}/{view>capacity}"/>
+                                </HBox>
+
+                                <ProgressIndicator percentValue="{view>occupancyPercent}" state="{view>state}" displayValue="{view>occupancyPercent}%"/>
+
+                                <Label text="Current Residents:" design="Bold" class="sapUiSmallMarginTop" visible="{= ${view>occupied} > 0 }"/>
+                                <List items="{view>residents}" visible="{= ${view>occupied} > 0 }" showSeparators="None">
+                                    <CustomListItem>
+                                        <Text text="• {view>name}" class="sapUiTinyMarginBottom" type="Secondary"/>
+                                    </CustomListItem>
+                                </List>
+
+                                <Button text="+ Allocate" 
+                                    type="Emphasized" 
+                                    width="100%" 
+                                    class="sapUiMediumMarginTop" 
+                                    enabled="{= ${view>available} > 0 }"
+                                    press=".onOpenAllocateDialog"/>
+                                    
+                            </VBox>
+                        </f:content>
+                    </f:Card>
+                </grid:CSSGrid>
+
             </VBox>
         </content>
     </Page>
