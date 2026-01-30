@@ -32,9 +32,14 @@ sap.ui.define([
         },
 
         onMenuItemPress(oEvent) {
-            const oItem = oEvent.getParameter("listItem");
-            const oContext = oItem ? oItem.getBindingContext("menu") : null;
+            // DEBUG: Keep these logs temporarily to troubleshoot click/navigation issues
+            console.log("onMenuItemPress fired", oEvent);
+
+            // Some UI5 versions / controls may use different parameter names; try common fallbacks
+            const oItem = oEvent.getParameter("listItem") || oEvent.getParameter("item") || oEvent.getSource();
+            const oContext = oItem && (oItem.getBindingContext("menu") || oItem.getBindingContext());
             if (!oContext) {
+                console.warn("Menu item has no binding context", oItem, oEvent.getParameters());
                 return;
             }
             const sItemId = oContext.getObject().id;
