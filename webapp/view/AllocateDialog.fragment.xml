@@ -13,8 +13,9 @@
                 </VBox>
 
                 <Label text="Student ID/Name" design="Bold" class="sapUiTinyMarginTop"/>
+                
                 <ComboBox id="studentInput" 
-                    items="{/students}" 
+                    items="{view>/availableStudents}" 
                     width="100%" 
                     placeholder="Select or type student...">
                     <core:Item key="{id}" text="{name} ({studentId})"/>
