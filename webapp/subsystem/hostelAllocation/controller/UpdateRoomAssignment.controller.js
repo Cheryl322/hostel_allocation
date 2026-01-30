@@ -6,7 +6,6 @@ sap.ui.define([
 ], function (Controller, JSONModel, MessageBox, MessageToast) {
     "use strict";
 
-    // ✅ 名字是对的 (长路径)
     return Controller.extend("project1.subsystem.hostelAllocation.controller.UpdateRoomAssignment", {
         
         onInit: function () {
@@ -20,10 +19,52 @@ sap.ui.define([
             });
             this.getView().setModel(oViewModel, "view");
 
-            // 2. 等待主数据加载完再刷新列表
-            this.getOwnerComponent().getModel().dataLoaded().then(function() {
-                this._refreshForm();
-            }.bind(this));
+            // 2. 🔥 关键修复：监听路由匹配事件 🔥
+            // 只要你从别的页面跳过来，这个函数就会触发
+            var oRouter = this.getOwnerComponent().getRouter();
+            oRouter.getRoute("updateRoomAssignment").attachPatternMatched(this._onObjectMatched, this);
+        },
+
+        // 🔥 每次进入页面都会自动执行这个函数
+        _onObjectMatched: function() {
+            this._refreshForm();
+        },
+
+        // 刷新界面数据
+        _refreshForm: function () {
+            var oMainModel = this.getOwnerComponent().getModel();
+            if (!oMainModel) return;
+
+            var aStudents = oMainModel.getProperty("/students") || [];
+            var aRooms = oMainModel.getProperty("/rooms") || [];
+            var aAllocations = oMainModel.getProperty("/allocations") || [];
+
+            console.log("正在刷新 Update 页面，当前分配记录:", aAllocations); // 👈 方便你在控制台调试
+
+            // 1. 筛选出“有房间”的学生 (用于下拉框)
+            // 逻辑：必须在 allocations 列表里能找到这个 ID
+            var aStudentsWithRoom = aStudents.filter(function(student) {
+                return aAllocations.some(function(allocation) {
+                    return allocation.studentId === student.id;
+                });
+            });
+
+            // 2. 筛选出“还有空位”的房间
+            var aAvailableRooms = aRooms.filter(function(room) {
+                return room.available > 0;
+            });
+
+            // 3. 更新 View Model
+            var oViewModel = this.getView().getModel("view");
+            oViewModel.setProperty("/studentsWithAssignment", aStudentsWithRoom);
+            oViewModel.setProperty("/availableRooms", aAvailableRooms);
+            
+            // 重置输入框
+            oViewModel.setProperty("/selectedStudentId", "");
+            oViewModel.setProperty("/currentRoomId", "");
+            oViewModel.setProperty("/selectedNewRoomId", "");
+            
+            this._updateConfirmButton();
         },
 
         // 当用户在下拉框里选了学生
@@ -79,7 +120,6 @@ sap.ui.define([
             var oOldRoom = aRooms.find(function(r) { return r.roomNumber === sOldRoomId; });
             var oStudent = aStudents.find(function(s) { return s.id === sStudentId; });
 
-            // 验证
             if (oNewRoom.available <= 0) {
                 MessageBox.error("目标房间已满！");
                 return;
@@ -106,40 +146,8 @@ sap.ui.define([
             this._refreshForm();
         },
 
-        _refreshForm: function () {
-            var oMainModel = this.getOwnerComponent().getModel();
-            if (!oMainModel) return;
-
-            var aStudents = oMainModel.getProperty("/students") || [];
-            var aRooms = oMainModel.getProperty("/rooms") || [];
-            var aAllocations = oMainModel.getProperty("/allocations") || [];
-
-            // 筛选出有房间的学生
-            var aStudentsWithRoom = aStudents.filter(function(student) {
-                return aAllocations.some(function(allocation) {
-                    return allocation.studentId === student.id;
-                });
-            });
-
-            // 筛选出有空位的房间
-            var aAvailableRooms = aRooms.filter(function(room) {
-                return room.available > 0;
-            });
-
-            var oViewModel = this.getView().getModel("view");
-            oViewModel.setProperty("/studentsWithAssignment", aStudentsWithRoom);
-            oViewModel.setProperty("/availableRooms", aAvailableRooms);
-            
-            oViewModel.setProperty("/selectedStudentId", "");
-            oViewModel.setProperty("/currentRoomId", "");
-            oViewModel.setProperty("/selectedNewRoomId", "");
-            
-            this._updateConfirmButton();
-        },
-
         onNavBack: function () {
             var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-            // 这里跳回菜单页 (TargetRoomAllocation)
             oRouter.navTo("roomAllocation"); 
         }
     });
