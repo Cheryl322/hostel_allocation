@@ -1,64 +1,48 @@
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
-    "sap/ui/model/json/JSONModel",
-    "sap/m/MessageToast"
-], function (Controller, JSONModel, MessageToast) {
+    "sap/ui/model/json/JSONModel"
+], function (Controller, JSONModel) {
     "use strict";
 
-    return Controller.extend("project1.controller.View1", {
+    return Controller.extend("project1.controller.View1", { // ⚠️ 记得改这里的名字
         
         onInit: function () {
-            // === 1. 准备 Dashboard 的模拟数据 ===
-            // 这些数据是为了配合 View1.view.xml 里的绑定显示用的
+            // === 模拟图中的数据 ===
             var oDashboardData = {
-                // 顶部统计数字
-                statistics: {
-                    pendingApps: 45,
-                    maintenance: 23,
-                    occupied: 1092,
-                    revenue: "970k"
-                },
-                // 近期申请列表 (左栏)
+                // 近期申请
                 recentApplications: [
-                    { name: "Ahmad Zaki", id: "APP-001", date: "2025-01-05", status: "Pending", state: "Warning" },
-                    { name: "Siti Aisyah", id: "APP-002", date: "2025-01-05", status: "Approved", state: "Success" },
-                    { name: "Muhammad Haikal", id: "APP-003", date: "2025-01-04", status: "Pending", state: "Warning" },
-                    { name: "Nurul Huda", id: "APP-004", date: "2025-01-04", status: "Rejected", state: "Error" },
-                    { name: "Lee Wei Kang", id: "APP-005", date: "2025-01-03", status: "Approved", state: "Success" }
+                    { name: "Ahmad Zaki Bin Mohd Ali", id: "APP-2025-001", date: "2025-01-05", status: "Pending", state: "Warning" },
+                    { name: "Siti Aisyah Binti Rahman", id: "APP-2025-002", date: "2025-01-05", status: "Approved", state: "Success" },
+                    { name: "Muhammad Haikal", id: "APP-2025-003", date: "2025-01-04", status: "Pending", state: "Warning" },
+                    { name: "Nurul Huda Binti Abdullah", id: "APP-2025-004", date: "2025-01-04", status: "Rejected", state: "Error" }
                 ],
-                // 维修请求列表 (右栏)
+                // 维修请求
                 maintenance: [
-                    { issue: "Air conditioner not working", location: "Block A - 205", priority: "High", state: "Warning" },
-                    { issue: "Water leakage in bathroom", location: "Block B - 310", priority: "Urgent", state: "Error" },
-                    { issue: "Broken Window", location: "Block C - 105", priority: "Medium", state: "None" },
-                    { issue: "Light bulb replacement", location: "Block A - 401", priority: "Low", state: "Success" }
+                    { issue: "Air conditioner not working", location: "Block A - 205", reporter: "Ahmad Firdaus", priority: "High", state: "Warning" },
+                    { issue: "Water leakage in bathroom", location: "Block B - 310", reporter: "Siti Nurhaliza", priority: "Urgent", state: "Error" },
+                    { issue: "Broken Window", location: "Block C - 105", reporter: "Muhammad Afiq", priority: "Medium", state: "Warning" }
+                ],
+                // 近期付款
+                recentPayments: [
+                    { name: "Ahmad Firdaus Bin Hassan", amount: "777.00", time: "2 hours ago", status: "Success", state: "Success" },
+                    { name: "Siti Nurhaliza Binti Ahmad", amount: "777.00", time: "3 hours ago", status: "Pending", state: "Warning" },
+                    { name: "Muhammad Afiq Bin Rahman", amount: "777.00", time: "1 day ago", status: "Success", state: "Success" }
                 ]
             };
 
-            // 创建一个 JSON Model，并命名为 "dashboard"
-            // 这样你在 XML 里就可以用 {dashboard>/recentApplications} 来绑定数据了
             var oModel = new JSONModel(oDashboardData);
             this.getView().setModel(oModel, "dashboard");
         },
 
-        // === 2. 头部磁贴点击事件 (可选) ===
-        onPress: function (oEvent) {
-            MessageToast.show("点击了统计卡片 (演示功能)");
-        },
-
-        // === 3. 路由跳转功能 (连接到你之前的页面) ===
-        
-        // 跳转到 Allocate Room 页面
+        // === 路由跳转 (保持你的功能) ===
         onNavToAllocate: function() {
             this.getOwnerComponent().getRouter().navTo("allocateRoom");
         },
 
-        // 跳转到 View Availability 页面
         onNavToView: function() {
             this.getOwnerComponent().getRouter().navTo("viewRoomAvailability");
         },
 
-        // 跳转到 Update Assignment 页面
         onNavToUpdate: function() {
             this.getOwnerComponent().getRouter().navTo("updateRoomAssignment");
         }
