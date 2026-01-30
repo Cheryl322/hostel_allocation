@@ -1,66 +1,38 @@
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
     "sap/ui/model/json/JSONModel"
-], (Controller, JSONModel) => {
+], function (Controller, JSONModel) {
     "use strict";
 
+    // ✅ 注意：这里的名字必须跟你的文件夹层级完全对应
     return Controller.extend("project1.subsystem.hostelAllocation.controller.RoomAllocation", {
-        onInit() {
-            const oViewModel = new JSONModel({
+        
+        onInit: function () {
+            var oViewModel = new JSONModel({
                 menuItems: [
-                    {
-                        id: "viewRoomAvailability",
-                        title: "View Room Availability",
-                        description: "View current availability and occupancy status of hostel rooms",
-                        icon: "sap-icon://display"
-                    },
-                    {
-                        id: "allocateRoom",
-                        title: "Allocate Room",
-                        description: "Allocate an available room to student based on eligibility",
-                        icon: "sap-icon://add"
-                    },
-                    {
-                        id: "updateRoomAssignment",
-                        title: "Update Room Assignment",
-                        description: "Update or change an existing room assignment for a student",
-                        icon: "sap-icon://edit"
-                    }
+                    { id: "viewRoomAvailability", title: "View Room Availability", icon: "sap-icon://display" },
+                    { id: "allocateRoom", title: "Allocate Room", icon: "sap-icon://add" },
+                    { id: "updateRoomAssignment", title: "Update Room Assignment", icon: "sap-icon://edit" }
                 ]
             });
+            // 绑定 Model，并给它起个名字叫 "menu"
             this.getView().setModel(oViewModel, "menu");
         },
 
-        onMenuItemPress(oEvent) {
-            // DEBUG: Keep these logs temporarily to troubleshoot click/navigation issues
-            console.log("onMenuItemPress fired", oEvent);
+        onMenuItemPress: function (oEvent) {
+            var oItem = oEvent.getParameter("listItem") || oEvent.getSource();
+            var oContext = oItem.getBindingContext("menu");
+            
+            if (!oContext) return;
 
-            // Some UI5 versions / controls may use different parameter names; try common fallbacks
-            const oItem = oEvent.getParameter("listItem") || oEvent.getParameter("item") || oEvent.getSource();
-            const oContext = oItem && (oItem.getBindingContext("menu") || oItem.getBindingContext());
-            if (!oContext) {
-                console.warn("Menu item has no binding context", oItem, oEvent.getParameters());
-                return;
-            }
-            const sItemId = oContext.getObject().id;
-            const oRouter = this.getOwnerComponent().getRouter();
+            var sItemId = oContext.getProperty("id");
+            var oRouter = this.getOwnerComponent().getRouter();
 
-            switch (sItemId) {
-                case "viewRoomAvailability":
-                    oRouter.navTo("viewRoomAvailability");
-                    break;
-                case "allocateRoom":
-                    oRouter.navTo("allocateRoom");
-                    break;
-                case "updateRoomAssignment":
-                    oRouter.navTo("updateRoomAssignment");
-                    break;
-                default:
-                    break;
-            }
+            // 跳转路由
+            oRouter.navTo(sItemId); 
         },
 
-        onNavBack() {
+        onNavBack: function () {
             this.getOwnerComponent().getRouter().navTo("RouteView1");
         }
     });
