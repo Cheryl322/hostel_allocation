@@ -1,0 +1,21 @@
+<mvc:View controllerName="project1.subsystem.hostelAllocation.controller.RoomAllocation"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m">
+    <Page id="roomAllocationPage"
+        title="{i18n>roomAllocation.title}"
+        showNavButton="true"
+        navButtonPress=".onNavBack">
+        <content>
+            <List id="roomAllocationMenu"
+                headerText="{i18n>roomAllocation.menuTitle}"
+                items="{/menuItems}">
+                <StandardListItem
+                    title="{title}"
+                    description="{description}"
+                    icon="{icon}"
+                    type="Navigation"
+                    press=".onMenuItemPress"/>
+            </List>
+        </content>
+    </Page>
+</mvc:View>
