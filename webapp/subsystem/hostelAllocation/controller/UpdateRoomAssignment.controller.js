@@ -190,13 +190,13 @@ sap.ui.define([
                     var oFirstRoommate = aStudents.find(s => s.id === oFirstRoommateAlloc.studentId);
                     
                     if (oFirstRoommate && oStudent && oFirstRoommate.gender !== oStudent.gender) {
-                        MessageBox.error("操作失败：性别不匹配！你不能把 " + oStudent.gender + " (学生) 塞进 " + oFirstRoommate.gender + " (室友) 的房间。");
+                        MessageBox.error("Operation Failed: Gender Mismatch! Cannot assign a " + oStudent.gender + " student to a room occupied by " + oFirstRoommate.gender + " residents.");
                         return;
                     }
                 } else {
                     // 如果房间是空的，检查房间本身的性别设定 (如果 rooms.json 里有 gender 字段的话)
                     if (oNewRoom.gender && oNewRoom.gender !== oStudent.gender) {
-                         MessageBox.error("操作失败：该房间仅限 " + oNewRoom.gender + " 入住。");
+                         MessageBox.error("Operation Failed: This room is designated for " + oNewRoom.gender + " students only.");
                          return;
                     }
                 }
