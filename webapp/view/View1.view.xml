@@ -221,9 +221,23 @@
                             </f:header>
                             <f:content>
                                 <List>
-                                    <StandardListItem title="Allocate Room" type="Navigation" press="onNavToAllocate" icon="sap-icon://add"/>
-                                    <StandardListItem title="View Availability" type="Navigation" press="onNavToView" icon="sap-icon://display"/>
-                                    <StandardListItem title="Update Assignment" type="Navigation" press="onNavToUpdate" icon="sap-icon://edit"/>
+                                    <StandardListItem 
+                                        title="Allocate Room" 
+                                        type="Navigation" 
+                                        press=".onNavToAllocate" 
+                                        icon="sap-icon://add"/>
+                                    
+                                    <StandardListItem 
+                                        title="View Availability" 
+                                        type="Navigation" 
+                                        press=".onNavToView" 
+                                        icon="sap-icon://display"/>
+                                    
+                                    <StandardListItem 
+                                        title="Update Assignment" 
+                                        type="Navigation" 
+                                        press=".onNavToUpdate" 
+                                        icon="sap-icon://edit"/>
                                 </List>
                             </f:content>
                         </f:Card>
