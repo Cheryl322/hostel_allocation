@@ -1,6 +1,6 @@
-sap.ui.define([
+sap.ui.define("project1.subsystem.hostelAllocation.RoomAllocationService", [
     "sap/ui/model/json/JSONModel"
-], (JSONModel) => {
+], function (JSONModel) {
     "use strict";
 
     const MOCK_ROOMS = {
