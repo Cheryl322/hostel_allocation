@@ -1,0 +1,28 @@
+{
+  "students": [
+    {
+      "id": "S001",
+      "name": "Ahmad bin Ali",
+      "studentId": "2024001",
+      "applicationStatus": "Approved",
+      "assignedRoom": "R001",
+      "gender": "Male"
+    },
+    {
+      "id": "S002",
+      "name": "Siti Nurhaliza",
+      "studentId": "2024002",
+      "applicationStatus": "Approved",
+      "assignedRoom": null,
+      "gender": "Female"
+    },
+    {
+      "id": "S003",
+      "name": "Muhammad Hafiz",
+      "studentId": "2024003",
+      "applicationStatus": "Approved",
+      "assignedRoom": "R004",
+      "gender": "Male"
+    }
+  ]
+}

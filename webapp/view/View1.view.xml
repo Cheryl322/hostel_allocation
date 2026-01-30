@@ -2,5 +2,15 @@
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m">
     <Page id="page" title="{i18n>title}">
+        <content>
+            <List id="mainMenu" headerText="{i18n>mainMenu}">
+                <StandardListItem
+                    title="{i18n>roomAllocation.title}"
+                    description="{i18n>roomAllocation.menuDescription}"
+                    icon="sap-icon://building"
+                    type="Navigation"
+                    press=".onRoomAllocationPress"/>
+            </List>
+        </content>
     </Page>
 </mvc:View>

@@ -38,7 +38,8 @@
       "minUI5Version": "1.144.0",
       "libs": {
         "sap.m": {},
-        "sap.ui.core": {}
+        "sap.ui.core": {},
+        "sap.ui.layout": {}
       }
     },
     "contentDensities": {
@@ -79,12 +80,60 @@
           "target": [
             "TargetView1"
           ]
+        },
+        {
+          "name": "roomAllocation",
+          "pattern": "room-allocation",
+          "target": [
+            "TargetRoomAllocation"
+          ]
+        },
+        {
+          "name": "viewRoomAvailability",
+          "pattern": "room-allocation/view-availability",
+          "target": [
+            "TargetViewRoomAvailability"
+          ]
+        },
+        {
+          "name": "allocateRoom",
+          "pattern": "room-allocation/allocate",
+          "target": [
+            "TargetAllocateRoom"
+          ]
+        },
+        {
+          "name": "updateRoomAssignment",
+          "pattern": "room-allocation/update",
+          "target": [
+            "TargetUpdateRoomAssignment"
+          ]
         }
       ],
       "targets": {
         "TargetView1": {
           "id": "View1",
           "name": "View1"
+        },
+        "TargetRoomAllocation": {
+          "id": "RoomAllocation",
+          "name": "RoomAllocation",
+          "viewPath": "project1.subsystem.hostelAllocation.view"
+        },
+        "TargetViewRoomAvailability": {
+          "id": "ViewRoomAvailability",
+          "name": "ViewRoomAvailability",
+          "viewPath": "project1.subsystem.hostelAllocation.view"
+        },
+        "TargetAllocateRoom": {
+          "id": "AllocateRoom",
+          "name": "AllocateRoom",
+          "viewPath": "project1.subsystem.hostelAllocation.view"
+        },
+        "TargetUpdateRoomAssignment": {
+          "id": "UpdateRoomAssignment",
+          "name": "UpdateRoomAssignment",
+          "viewPath": "project1.subsystem.hostelAllocation.view"
         }
       }
     },

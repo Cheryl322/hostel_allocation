@@ -1,0 +1,65 @@
+<mvc:View controllerName="project1.subsystem.hostelAllocation.controller.UpdateRoomAssignment"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:form="sap.ui.layout.form">
+    <Page id="updateRoomAssignmentPage"
+        title="{i18n>roomAllocation.updateRoomAssignment}"
+        showNavButton="true"
+        navButtonPress=".onNavBack">
+        <content>
+            <MessageStrip id="roomFullMessage"
+                text="{i18n>roomAllocation.selectedRoomNotAvailable}"
+                type="Error"
+                visible="false"
+                class="sapUiMediumMarginBottom"/>
+            <MessageStrip id="successMessage"
+                text="{i18n>roomAllocation.roomAssignmentUpdatedSuccess}"
+                type="Success"
+                visible="false"
+                class="sapUiMediumMarginBottom"/>
+            <VBox class="sapUiMediumMargin">
+                <form:SimpleForm id="updateForm"
+                    editable="true"
+                    layout="ResponsiveGridLayout"
+                    labelSpanXL="4"
+                    labelSpanL="4"
+                    labelSpanM="4"
+                    labelSpanS="12"
+                    emptySpanXL="0"
+                    emptySpanL="0"
+                    emptySpanM="0"
+                    emptySpanS="0"
+                    columnsXL="1"
+                    columnsL="1"
+                    columnsM="1"
+                    singleContainerFullSize="false">
+                    <form:content>
+                        <Label text="{i18n>roomAllocation.selectStudent}"/>
+                        <Select id="studentSelect"
+                            selectedKey="{/selectedStudentId}"
+                            change=".onStudentChange"
+                            items="{/studentsWithAssignment}">
+                            <core:Item key="{id}" text="{name} ({studentId}) - {assignedRoom}"/>
+                        </Select>
+                        <Label text="{i18n>roomAllocation.currentRoom}"/>
+                        <Text id="currentRoomText" text="{/currentRoomId}"/>
+                        <Label text="{i18n>roomAllocation.selectNewRoom}"/>
+                        <Select id="roomSelect"
+                            selectedKey="{/selectedNewRoomId}"
+                            change=".onRoomChange"
+                            items="{/availableRooms}">
+                            <core:Item key="{id}" text="{id} - {building} Floor {floor} ({status})"/>
+                        </Select>
+                    </form:content>
+                </form:SimpleForm>
+                <Button id="confirmUpdateBtn"
+                    text="{i18n>roomAllocation.confirmUpdate}"
+                    type="Emphasized"
+                    press=".onConfirmUpdate"
+                    enabled="false"
+                    class="sapUiMediumMarginTop"/>
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>

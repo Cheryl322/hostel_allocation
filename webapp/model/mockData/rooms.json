@@ -1,0 +1,49 @@
+{
+  "rooms": [
+    {
+      "id": "R001",
+      "building": "Block A",
+      "floor": 1,
+      "capacity": 2,
+      "occupied": 1,
+      "status": "Available",
+      "gender": "Male"
+    },
+    {
+      "id": "R002",
+      "building": "Block A",
+      "floor": 1,
+      "capacity": 2,
+      "occupied": 2,
+      "status": "Full",
+      "gender": "Male"
+    },
+    {
+      "id": "R003",
+      "building": "Block A",
+      "floor": 2,
+      "capacity": 2,
+      "occupied": 0,
+      "status": "Available",
+      "gender": "Female"
+    },
+    {
+      "id": "R004",
+      "building": "Block B",
+      "floor": 1,
+      "capacity": 2,
+      "occupied": 1,
+      "status": "Available",
+      "gender": "Male"
+    },
+    {
+      "id": "R005",
+      "building": "Block B",
+      "floor": 2,
+      "capacity": 2,
+      "occupied": 0,
+      "status": "Available",
+      "gender": "Female"
+    }
+  ]
+}
