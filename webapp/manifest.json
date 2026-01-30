@@ -85,6 +85,7 @@
           "name": "viewRoomAvailability",
           "pattern": "room-allocation/view-availability",
           "target": [
+            "TargetRoomAllocation",
             "TargetViewRoomAvailability"
           ]
         },
@@ -92,6 +93,7 @@
           "name": "allocateRoom",
           "pattern": "room-allocation/allocate",
           "target": [
+            "TargetRoomAllocation",
             "TargetAllocateRoom"
           ]
         },
@@ -99,6 +101,7 @@
           "name": "updateRoomAssignment",
           "pattern": "room-allocation/update",
           "target": [
+            "TargetRoomAllocation",
             "TargetUpdateRoomAssignment"
           ]
         },
