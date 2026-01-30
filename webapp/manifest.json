@@ -70,47 +70,36 @@
         "type": "View",
         "viewType": "XML",
         "path": "project1.view",
-        "async": true,
-        "viewPath": "project1.view"
+        "async": true
       },
       "routes": [
         {
+          "name": "RouteView1",
+          "pattern": ":?query:",
+          "target": ["TargetView1"]
+        },
+        {
           "name": "roomAllocation",
           "pattern": "room-allocation",
-          "target": [
-            "TargetRoomAllocation"
-          ]
+          "target": ["TargetRoomAllocation"]
         },
         {
           "name": "viewRoomAvailability",
           "pattern": "room-allocation/view-availability",
-          "target": [
-            "TargetRoomAllocation",
-            "TargetViewRoomAvailability"
-          ]
+          "target": ["TargetViewRoomAvailability"] 
+          
         },
         {
           "name": "allocateRoom",
           "pattern": "room-allocation/allocate",
-          "target": [
-            "TargetRoomAllocation",
-            "TargetAllocateRoom"
-          ]
+          "target": ["TargetAllocateRoom"]
+          
         },
         {
           "name": "updateRoomAssignment",
           "pattern": "room-allocation/update",
-          "target": [
-            "TargetRoomAllocation",
-            "TargetUpdateRoomAssignment"
-          ]
-        },
-        {
-          "name": "RouteView1",
-          "pattern": ":?query:",
-          "target": [
-            "TargetView1"
-          ]
+          "target": ["TargetUpdateRoomAssignment"]
+          
         }
       ],
       "targets": {
@@ -136,7 +125,8 @@
         "TargetUpdateRoomAssignment": {
           "id": "UpdateRoomAssignment",
           "name": "UpdateRoomAssignment",
-          "path": "subsystem.hostelAllocation.view"
+          "path": "project1.subsystem.hostelAllocation.view" 
+          
         }
       }
     },
