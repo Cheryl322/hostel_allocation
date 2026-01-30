@@ -118,22 +118,22 @@
         "TargetRoomAllocation": {
           "id": "RoomAllocation",
           "name": "RoomAllocation",
-          "viewPath": "project1.subsystem.hostelAllocation.view"
+          "path": "project1.subsystem.hostelAllocation.view"
         },
         "TargetViewRoomAvailability": {
           "id": "ViewRoomAvailability",
           "name": "ViewRoomAvailability",
-          "viewPath": "project1.subsystem.hostelAllocation.view"
+          "path": "project1.subsystem.hostelAllocation.view"
         },
         "TargetAllocateRoom": {
           "id": "AllocateRoom",
           "name": "AllocateRoom",
-          "viewPath": "project1.subsystem.hostelAllocation.view"
+          "path": "project1.subsystem.hostelAllocation.view"
         },
         "TargetUpdateRoomAssignment": {
           "id": "UpdateRoomAssignment",
           "name": "UpdateRoomAssignment",
-          "viewPath": "project1.subsystem.hostelAllocation.view"
+          "path": "project1.subsystem.hostelAllocation.view"
         }
       }
     },
