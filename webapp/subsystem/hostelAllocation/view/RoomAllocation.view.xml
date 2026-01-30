@@ -8,13 +8,13 @@
         <content>
             <List id="roomAllocationMenu"
                 headerText="{i18n>roomAllocation.menuTitle}"
-                items="{/menuItems}">
+                items="{menu>/menuItems}"
+                itemPress=".onMenuItemPress">
                 <StandardListItem
-                    title="{title}"
-                    description="{description}"
-                    icon="{icon}"
-                    type="Navigation"
-                    press=".onMenuItemPress"/>
+                    title="{menu>title}"
+                    description="{menu>description}"
+                    icon="{menu>icon}"
+                    type="Navigation"/>
             </List>
         </content>
     </Page>

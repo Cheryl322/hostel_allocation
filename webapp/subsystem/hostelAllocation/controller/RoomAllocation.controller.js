@@ -28,11 +28,16 @@ sap.ui.define([
                     }
                 ]
             });
-            this.getView().setModel(oViewModel);
+            this.getView().setModel(oViewModel, "menu");
         },
 
         onMenuItemPress(oEvent) {
-            const sItemId = oEvent.getSource().getBindingContext().getObject().id;
+            const oItem = oEvent.getParameter("listItem");
+            const oContext = oItem ? oItem.getBindingContext("menu") : null;
+            if (!oContext) {
+                return;
+            }
+            const sItemId = oContext.getObject().id;
             const oRouter = this.getOwnerComponent().getRouter();
 
             switch (sItemId) {
