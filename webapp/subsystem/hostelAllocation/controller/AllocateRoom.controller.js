@@ -131,7 +131,7 @@ sap.ui.define([
                 
                 oDialog.open();
             }.bind(this));
-        },
+        }, 
 
         onCloseDialog: function () {
             this.byId("studentInput").setValue(""); 
