@@ -7,7 +7,7 @@
     xmlns:grid="sap.ui.layout.cssgrid"
     xmlns:tnt="sap.tnt">
 
-    <Page title="Room Allocation" backgroundDesign="Solid" showHeader="true">
+    <Page title="Room Allocation" showNavButton="true" navButtonPress=".onNavBack">
         <headerContent>
              <Title text="Manage room availability, allocations, and assignments" level="H6" class="sapUiTinyMarginTop"/>
         </headerContent>

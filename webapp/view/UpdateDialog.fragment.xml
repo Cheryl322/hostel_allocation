@@ -1,0 +1,48 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <Dialog title="Update Room Assignment" contentWidth="450px">
+        
+        <content>
+            <VBox class="sapUiSmallMargin">
+                
+                <VBox class="sapUiSmallMarginBottom sapUiTinyMarginTop" 
+                      backgroundDesign="Solid" 
+                      style="background-color: #fff5eb; padding: 1rem; border-radius: 8px; border: 1px solid #ffccbc;">
+                    <Title text="Block {view>block} ({view>building}) - Room {view>roomNumber}" level="H5" class="sapUiTinyMarginBottom"/>
+                    <Text text="Current occupancy: {view>occupied} / {view>capacity}" type="Secondary"/>
+                </VBox>
+
+                <Label text="Current Residents" design="Bold" class="sapUiTinyMarginTop"/>
+                <ComboBox id="studentSelect" 
+                    items="{view>residents}" 
+                    width="100%" 
+                    placeholder="Select a student...">
+                    <core:Item key="{view>id}" text="{view>name}"/>
+                </ComboBox>
+
+                <Label text="Action" design="Bold" class="sapUiTinyMarginTop"/>
+                <Select id="actionSelect" width="100%">
+                    <core:Item key="CheckOut" text="Check Out (Vacate Room)"/>
+                    <core:Item key="Extend" text="Extend Stay"/>
+                    <core:Item key="ChangeRoom" text="Request Room Change"/>
+                </Select>
+
+                <Label text="Effective Date" design="Bold" class="sapUiTinyMarginTop"/>
+                <DatePicker id="datePicker" width="100%"/>
+
+                <Label text="Reason" design="Bold" class="sapUiTinyMarginTop"/>
+                <TextArea id="reasonInput" width="100%" rows="3" placeholder="Enter reason for update..."/>
+
+            </VBox>
+        </content>
+
+        <beginButton>
+            <Button text="Cancel" press=".onCloseDialog"/>
+        </beginButton>
+        <endButton>
+            <Button text="Update Assignment" type="Critical" press=".onConfirmUpdate" icon="sap-icon://edit"/>
+        </endButton>
+
+    </Dialog>
+</core:FragmentDefinition>

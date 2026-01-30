@@ -1,63 +1,74 @@
 <mvc:View controllerName="project1.subsystem.hostelAllocation.controller.UpdateRoomAssignment"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
+    xmlns:f="sap.f"
+    xmlns:grid="sap.ui.layout.cssgrid"
     xmlns:core="sap.ui.core"
-    xmlns:form="sap.ui.layout.form">
-    <Page id="updateRoomPage"
-        title="{i18n>roomAllocation.updateRoomAssignment}"
-        showNavButton="true"
-        navButtonPress=".onNavBack">
+    xmlns:tnt="sap.tnt">
+
+    <Page title="Update Room Assignment" showNavButton="true" navButtonPress=".onNavBack">
+        
+        <headerContent>
+             <Title text="Manage Availability &amp; Assignments" level="H6"/>
+        </headerContent>
+
         <content>
-            <MessageStrip id="successMessage"
-                text="{i18n>roomAllocation.updateSuccess}"
-                type="Success"
-                visible="false"
-                class="sapUiMediumMarginBottom"/>
+            <VBox class="sapUiSmallMargin">
 
-            <VBox class="sapUiMediumMargin">
-                <form:SimpleForm id="updateForm"
-                    editable="true"
-                    layout="ResponsiveGridLayout"
-                    labelSpanXL="4"
-                    labelSpanL="4"
-                    labelSpanM="4"
-                    labelSpanS="12"
-                    columnsXL="1"
-                    columnsL="1"
-                    columnsM="1"
-                    singleContainerFullSize="false">
-                    <form:content>
-                        
-                        <Label text="{i18n>roomAllocation.selectStudent}"/>
-                        <Select id="studentSelect"
-                            selectedKey="{view>/selectedStudentId}"
-                            change=".onStudentChange"
-                            items="{view>/studentsWithAssignment}">
-                            <core:Item key="{id}" text="{name} (ID: {id})"/>
-                        </Select>
+                <OverflowToolbar class="sapUiMediumMarginBottom">
+                    <SearchField width="40%" placeholder="Search room or student..." liveChange=".onSearch"/>
+                    <ToolbarSpacer/>
+                    <ComboBox placeholder="All Blocks" items="{view>/blocks}" selectionChange=".onFilterBlock">
+                        <core:Item key="{view>key}" text="{view>text}"/>
+                    </ComboBox>
+                </OverflowToolbar>
 
-                        <Label text="{i18n>roomAllocation.currentRoom}"/>
-                        <Input id="currentRoomInput"
-                            value="{view>/currentRoomId}"
-                            editable="false"/>
+                <grid:CSSGrid id="roomGrid" items="{view>/roomsWithResidents}" 
+                    gridTemplateColumns="repeat(auto-fill, minmax(20rem, 1fr))" 
+                    gridGap="1rem">
+                    
+                    <f:Card width="100%">
+                        <f:content>
+                            <VBox class="sapUiMediumMargin">
+                                <HBox justifyContent="SpaceBetween" alignItems="Start">
+                                    <VBox>
+                                        <Label text="Block {view>block} ({view>building})" design="Bold"/>
+                                        <Title text="Room {view>roomNumber}" level="H3"/>
+                                    </VBox>
+                                    <tnt:InfoLabel text="{view>statusText}" colorScheme="{view>statusColor}"/>
+                                </HBox>
 
-                        <Label text="{i18n>roomAllocation.newRoom}"/>
-                        <Select id="newRoomSelect"
-                            selectedKey="{view>/selectedNewRoomId}"
-                            change=".onRoomChange"
-                            items="{view>/availableRooms}">
-                            <core:Item key="{roomNumber}" text="{roomNumber} (剩余: {available})"/>
-                        </Select>
+                                <core:HTML content='&lt;hr style="border:none;border-top:1px solid #eaeaea;margin:0.5rem 0;"/&gt;' />
 
-                    </form:content>
-                </form:SimpleForm>
+                                <HBox justifyContent="SpaceBetween" class="sapUiTinyMarginBottom">
+                                    <Text text="Floor: {view>floor}"/>
+                                    <Text text="Capacity: {view>capacity}"/>
+                                    <Text text="Occupied: {view>occupied}/{view>capacity}"/>
+                                </HBox>
 
-                <Button id="confirmUpdateBtn"
-                    text="{i18n>roomAllocation.confirmUpdate}"
-                    type="Emphasized"
-                    press=".onConfirmUpdate"
-                    enabled="false"
-                    class="sapUiMediumMarginTop"/>
+                                <ProgressIndicator percentValue="{view>occupancyPercent}" state="{view>state}" displayValue="{view>occupancyPercent}%"/>
+
+                                <Label text="Current Residents:" design="Bold" class="sapUiSmallMarginTop" visible="{= ${view>occupied} > 0 }"/>
+                                <List items="{view>residents}" visible="{= ${view>occupied} > 0 }" showSeparators="None">
+                                    <CustomListItem>
+                                        <Text text="• {view>name}" class="sapUiTinyMarginBottom" type="Secondary"/>
+                                    </CustomListItem>
+                                </List>
+                                <Text text="No residents yet" visible="{= ${view>occupied} === 0 }" class="sapUiTinyMarginTop" type="Secondary"/>
+
+                                <Button text="Update" 
+                                    icon="sap-icon://edit"
+                                    type="Critical" 
+                                    width="100%" 
+                                    class="sapUiMediumMarginTop" 
+                                    enabled="{= ${view>occupied} > 0 }"
+                                    press=".onOpenUpdateDialog"/>
+                                    
+                            </VBox>
+                        </f:content>
+                    </f:Card>
+                </grid:CSSGrid>
+
             </VBox>
         </content>
     </Page>
