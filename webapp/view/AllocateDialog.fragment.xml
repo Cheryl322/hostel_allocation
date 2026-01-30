@@ -15,10 +15,11 @@
                 <Label text="Student ID/Name" design="Bold" class="sapUiTinyMarginTop"/>
                 
                 <ComboBox id="studentInput" 
-                    items="{view>/availableStudents}" 
+                    items="{view>/dialogStudents}" 
                     width="100%" 
-                    placeholder="Select or type student...">
-                    <core:Item key="{view>id}" text="{view>name} ({view>studentId})"/>
+                    placeholder="Select student (Gender matched)...">
+                    
+                    <core:Item key="{view>id}" text="{view>name} ({view>gender})"/>
                 </ComboBox>
 
                 <Label text="Session" design="Bold" class="sapUiTinyMarginTop"/>

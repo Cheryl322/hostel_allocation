@@ -29,12 +29,14 @@
 
                 <Label text="New Target Room" design="Bold" class="sapUiTinyMarginTop" 
                        visible="{= ${view>/selectedAction} === 'ChangeRoom' }"/>
+                
                 <ComboBox id="newRoomSelect" 
-                    items="{path: '/rooms', sorter: { path: 'roomNumber' }}" 
+                    items="{path: 'view>/roomsWithResidents', sorter: { path: 'roomNumber' }}" 
                     width="100%" 
                     placeholder="Select available room..."
                     visible="{= ${view>/selectedAction} === 'ChangeRoom' }">
-                    <core:Item key="{roomNumber}" text="{roomNumber} (Block {block}) - {available} slots left"/>
+                    
+                    <core:Item key="{view>roomNumber}" text="{view>roomNumber} (Block {view>block}) - {view>available} slots left"/>
                 </ComboBox>
 
                 <Label text="Effective Date" design="Bold" class="sapUiTinyMarginTop"/>

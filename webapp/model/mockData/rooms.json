@@ -6,9 +6,7 @@
       "building": "KTDI",
       "floor": 1,
       "capacity": 4,
-      "available": 4,
-      "gender": "Male",
-      "status": "Available"
+      "gender": "Male"
     },
     {
       "roomNumber": "102",
@@ -16,9 +14,7 @@
       "building": "KTDI",
       "floor": 1,
       "capacity": 4,
-      "available": 3,
-      "gender": "Female",
-      "status": "Available"
+      "gender": "Female"
     },
     {
       "roomNumber": "103",
@@ -26,9 +22,7 @@
       "building": "KTDI",
       "floor": 1,
       "capacity": 4,
-      "available": 2,
-      "gender": "Male",
-      "status": "Available"
+      "gender": "Male"
     },
     {
       "roomNumber": "104",
@@ -36,9 +30,7 @@
       "building": "KTDI",
       "floor": 1,
       "capacity": 4,
-      "available": 0,
-      "gender": "Male",
-      "status": "Full"
+      "gender": "Male"
     },
     {
       "roomNumber": "201",
@@ -46,9 +38,7 @@
       "building": "KTDI",
       "floor": 2,
       "capacity": 4,
-      "available": 4,
-      "gender": "Female",
-      "status": "Available"
+      "gender": "Female"
     },
     {
       "roomNumber": "202",
@@ -56,9 +46,7 @@
       "building": "KTDI",
       "floor": 2,
       "capacity": 4,
-      "available": 1,
-      "gender": "Male",
-      "status": "Available"
+      "gender": "Male"
     },
     {
       "roomNumber": "101-B",
@@ -66,9 +54,7 @@
       "building": "KTC",
       "floor": 1,
       "capacity": 4,
-      "available": 4,
-      "gender": "Male",
-      "status": "Available"
+      "gender": "Male"
     },
     {
       "roomNumber": "102-B",
@@ -76,9 +62,7 @@
       "building": "KTC",
       "floor": 1,
       "capacity": 4,
-      "available": 2,
-      "gender": "Female",
-      "status": "Available"
+      "gender": "Female"
     },
     {
       "roomNumber": "101-C",
@@ -86,9 +70,7 @@
       "building": "KTR",
       "floor": 1,
       "capacity": 4,
-      "available": 4,
-      "gender": "Male",
-      "status": "Available"
+      "gender": "Male"
     }
   ]
 }

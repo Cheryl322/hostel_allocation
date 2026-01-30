@@ -83,10 +83,33 @@ sap.ui.define([
         },
 
         // === 弹窗逻辑 ===
+        // === 弹窗逻辑：智能过滤性别 ===
         onOpenAllocateDialog: function (oEvent) {
             var oButton = oEvent.getSource();
             var oBindingContext = oButton.getBindingContext("view");
+            var oRoomData = oBindingContext.getObject(); // 获取当前房间的所有数据
             
+            // 1. 获取房间性别 (假设数据里有 gender: "Male" 或 "Female")
+            var sRoomGender = oRoomData.gender; 
+
+            // 2. 获取所有“未分配”的学生 (我们在 _refreshData 里算出来的)
+            var oViewModel = this.getView().getModel("view");
+            var aAllAvailable = oViewModel.getProperty("/availableStudents");
+
+            // 3. 🔥 核心逻辑：过滤性别 🔥
+            var aFilteredStudents = aAllAvailable; // 默认显示所有人
+            
+            if (sRoomGender) {
+                // 如果房间规定了性别，就只显示对应性别的学生
+                aFilteredStudents = aAllAvailable.filter(function(student) {
+                    return student.gender === sRoomGender;
+                });
+            }
+
+            // 4. 把过滤后的名单存回 Model，专门给 Dialog 用
+            oViewModel.setProperty("/dialogStudents", aFilteredStudents);
+
+            // 加载弹窗
             if (!this.pDialog) {
                 this.pDialog = Fragment.load({
                     id: this.getView().getId(),
